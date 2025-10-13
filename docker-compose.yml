@@ -1,0 +1,27 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_chavela
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example       # Contraseña del usuario root
+      MYSQL_DATABASE: chavela            # Base de datos creada al iniciar
+      TZ: America/Argentina/Buenos_Aires
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d  # Opcional: donde podés colocar tus scripts .sql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer
+    container_name: adminer_chavela
+    restart: always
+    ports:
+      - "8080:8080"
