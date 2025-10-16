@@ -2,9 +2,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
+#! Implementar variables de entorno
 DB_USER = "root"
 DB_PASSWORD = "example"
-DB_HOST = "127.0.0.1"  # ⚠️ NO uses 'localhost' (en MySQL puede intentar socket)
+DB_HOST = "127.0.0.1"
 DB_PORT = "3306"
 DB_NAME = "chavela"
 

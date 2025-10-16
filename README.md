@@ -53,7 +53,7 @@ pip install -r requirements.txt
 
 Iniciar el servidor en desarrollo:
 ```sh
-uvicorn uvicorn main:app --reload
+uvicorn main:app --reload
 ```
 
 Probar api:

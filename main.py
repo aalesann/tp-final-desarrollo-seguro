@@ -4,7 +4,7 @@ from models import Usuario, Rol
 from schemas import UsuarioOut, RolOut
 from auth import autenticar
 
-app = FastAPI(title="API REST - Chavela (FastAPI + MySQL)")
+app = FastAPI(title="API REST (FastAPI + MySQL)")
 
 @app.get("/health")
 def health():
@@ -14,6 +14,7 @@ def health():
 def auth_health(user=Depends(autenticar)):
     return {"ok": True, "who": user}
 
+#! TODO: Modularizar sesión
 # Dependencia para obtener una sesión de BD
 def get_db():
     db = SessionLocal()
