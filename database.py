@@ -1,24 +1,32 @@
-# database.py
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from pydantic_settings import BaseSettings
+from functools import lru_cache
+import os
 
-#! Implementar variables de entorno
-DB_USER = "root"
-DB_PASSWORD = "example"
-DB_HOST = "127.0.0.1"
-DB_PORT = "3306"
-DB_NAME = "chavela"
+class Settings(BaseSettings):
+    DB_URL: str = "mysql+pymysql://root:root@localhost:3306/micronova"
 
-DATABASE_URL = (
-    f"mysql+mysqlconnector://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-)
+    class Config:
+        env_file = ".env"
+        extra = "ignore"
 
-engine = create_engine(
-    DATABASE_URL,
-    echo=False,
-    pool_pre_ping=True,      # revalida conexiones muertas
-    pool_recycle=280,        # recicla conexiones para evitar TIME_WAIT
-    connect_args={"connect_timeout": 5},  # timeout corto => falla rápido si no conecta
-)
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-Base = declarative_base()
+@lru_cache
+def get_settings():
+    return Settings()
+
+settings = get_settings()
+
+engine = create_engine(settings.DB_URL, pool_pre_ping=True)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+class Base(DeclarativeBase):
+    pass
+
+# dependencia por request
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
